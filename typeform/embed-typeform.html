@@ -1,0 +1,29 @@
+<div data-tf-widget="D4aPM6rF" 
+     data-tf-on-ready="ready" 
+     data-tf-on-submit="submit"
+     data-tf-inline-on-mobile="true"
+     data-form-location="landing_page"
+     style="z-index: 10001; position: absolute; top: 0px; left: 0px; width: 100%; height: 100%;">
+</div>
+
+<script src="//embed.typeform.com/next/embed.js"></script>
+<script>
+  function ready({ formId }) {
+    console.log(`Form ${formId} is ready`)
+  }
+  function submit({ formId, responseId }) {
+    const el = document.querySelectorAll("div[data-tf-widget='"+formId+"']")[0];
+    let formLocation = el.dataset.formLocation;
+    
+    if (!formLocation) {
+    	formLocation = 'unknown';
+    } 
+    
+    console.log(`Submitting form ${formId} with responseId ${responseId} and formLocation ${formLocation}`)
+    
+	  dataLayer.push({
+      'event':'manual_typeform_submit', 
+      'form_location': formLocation, // landing_page, quiz_page or unknown
+    });
+  }
+</script>
