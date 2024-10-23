@@ -1,0 +1,93 @@
+<div data-tf-live="01J9SD8R0V06EN3EMXAX2AWPZH" 
+     data-tf-on-ready="ready" 
+     data-tf-on-submit="submit"
+     data-tf-inline-on-mobile="true"
+     data-tf-on-question-changed="changed"
+     data-form-location="landing_page"
+>
+</div>
+
+<script src="//embed.typeform.com/next/embed.js"></script>
+<script>
+  
+  function resizeHeight() {
+      // Select the div you want to observe
+    const targetDiv = document.querySelector('#lp-code-141');
+    const abc = document.querySelector('#lp-pom-block-18');
+    const qwerty = document.getElementById('lp-pom-root-color-overlay');
+    const abcHeight = abc.clientHeight;
+    const diff = abc.clientHeight - targetDiv.clientHeight;
+    const elems = document.getElementsByClassName('lp-positioned-content')[0].children;
+    let xyz = targetDiv.clientHeight;
+
+
+    function changeHeight(height) {
+      const newHeight = height + diff + 'px';
+      abc.style.height = newHeight;
+      const children = abc.children;
+
+      for (let i = 0; i < children.length; i++) {
+        children[i].style.height = newHeight; // Set the height of each child div
+      }
+
+      for (let i = 0; i < elems.length; i++) {
+        const toppp = elems[i].offsetTop;
+
+       
+        console.log("offset: " + (height - xyz));
+       
+
+        if (toppp > targetDiv.offsetTop) {
+          elems[i].style.top = (toppp + (height - xyz)) + 'px'; 
+        }
+      }
+      
+      qwerty.style.height = qwerty.offsetHeight + (height - xyz - 1) + 'px';
+    }
+
+    // Create a new ResizeObserver instance
+    const resizeObserver = new ResizeObserver(entries => {
+      for (let entry of entries) {
+        console.log('New height:', entry.contentRect.height);
+        changeHeight(entry.contentRect.height);
+        xyz = entry.contentRect.height;
+      }
+    });
+
+    // Start observing the target div
+    resizeObserver.observe(targetDiv);
+
+  }
+  
+  function changed({ formId, ref }) {
+    console.log(`Question in form ${formId} changed to ${ref}`)
+    
+    const el = document.querySelector('#lp-code-141');
+    
+    window.scroll({
+      top: el.offsetTop - 30,
+      behavior: "smooth",
+    });
+  }
+  
+  function ready({ formId }) {
+    console.log(`Form ${formId} is ready`);
+    
+    setTimeout(resizeHeight, 2000);
+  }
+  function submit({ formId, responseId }) {
+    const el = document.querySelectorAll("div[data-tf-widget='"+formId+"']")[0];
+    let formLocation = el.dataset.formLocation;
+    
+    if (!formLocation) {
+    	formLocation = 'unknown';
+    } 
+    
+    console.log(`Submitting form ${formId} with responseId ${responseId} and formLocation ${formLocation}`)
+    
+	  dataLayer.push({
+      'event':'manual_typeform_submit', 
+      'form_location': formLocation, // landing_page, quiz_page or unknown
+    });
+  }
+</script>
