@@ -1,0 +1,92 @@
+<div data-tf-widget="D4aPM6rF"
+    data-tf-on-ready="ready"
+    data-tf-on-submit="submit"
+    data-tf-inline-on-mobile="true"
+    data-tf-on-question-changed="changed"
+    data-tf-disable-scroll="true"
+    data-tf-auto-resize="true"
+    data-form-location="landing_page"
+></div>
+
+<script src="//embed.typeform.com/next/embed.js"></script>
+<script>
+
+  function resizeHeight() {
+      // Select the div you want to observe
+    const embedContainer = document.querySelector('#lp-code-141'); // this element is floating
+    const sectionContainer = document.querySelector('#lp-pom-block-18'); // this element is fixed
+    const fullPageOverlay = document.querySelector('#lp-pom-root-color-overlay'); //
+    const diff = sectionContainer.clientHeight - embedContainer.clientHeight;
+    const floatingElems = document.getElementsByClassName('lp-positioned-content')[0].children; // all elements that are floating
+    let previousHeight = embedContainer.clientHeight;
+
+    function changeHeight(newHeight) {
+      const newHeightPlusDiff = newHeight + diff + 'px';
+
+      //Set new height to sectionContainer and its children
+      sectionContainer.style.height = newHeightPlusDiff;
+      for (let i = 0; i < sectionContainer.children.length; i++) {
+        sectionContainer.children[i].style.height = newHeightPlusDiff; // Set the height of each child div
+      }
+
+      const offset = newHeight - previousHeight;
+
+      for (let i = 0; i < floatingElems.length; i++) {
+        const elemOffsetTop = floatingElems[i].offsetTop;
+
+        if (elemOffsetTop > embedContainer.offsetTop) {
+          // Move all elements of the page but the ones that are above than the form
+          floatingElems[i].style.top = (elemOffsetTop + offset) + 'px';
+        }
+      }
+
+      fullPageOverlay.style.height = fullPageOverlay.offsetHeight + (offset - 1) + 'px';
+    }
+
+    // Create a new ResizeObserver instance
+    const resizeObserver = new ResizeObserver(entries => {
+      for (let entry of entries) {
+        console.log('New height:', entry.contentRect.height);
+        changeHeight(entry.contentRect.height);
+        // After changing the height, keep a copy of the previous height
+        previousHeight = entry.contentRect.height;
+      }
+    });
+
+    // Start observing the target div
+    resizeObserver.observe(embedContainer);
+  }
+
+  function ready({ formId }) {
+    console.log(`READY: Form ${formId} is ready`);
+
+    setTimeout(resizeHeight, 2500);
+  }
+
+  function changed({ formId, ref }) {
+    console.log(`CHANGED: Question in form ${formId} changed to ${ref}`)
+
+    const el = document.querySelector('#lp-code-141');
+
+    window.scroll({
+      top: el.offsetTop - 30,
+      behavior: "smooth",
+    });
+  }
+
+  function submit({ formId, responseId }) {
+    const el = document.querySelectorAll("div[data-tf-widget='"+formId+"']")[0];
+    let formLocation = el.dataset.formLocation;
+
+    if (!formLocation) {
+    	formLocation = 'unknown';
+    }
+
+    console.log(`SUBMIT: Submitting form ${formId} with responseId ${responseId} and formLocation ${formLocation}`)
+
+	  dataLayer.push({
+      'event':'manual_typeform_submit',
+      'form_location': formLocation, // landing_page, quiz_page or unknown
+    });
+  }
+</script>
